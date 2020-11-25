@@ -23,7 +23,7 @@ interface Args {
 ```
 
 ```ts
-import getShnayimMikrah from 'shnayimMikrah';
+import getShnayimMikrah from '@orthodox-union/shnayimmikrah';
 
 // This will return the Shnayim Mikrah for todays aliyah as would be leined in the America/New_York timezone.
 await getShnayimMikrah({
