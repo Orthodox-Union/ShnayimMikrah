@@ -1,0 +1,31 @@
+{
+  "name": "shnayimmikrah",
+  "version": "0.1.0",
+  "description": "Wrapper over Sefaria API in order to get Shnayim Mikrah texts.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Orthodox-Union/ShnayimMikrah.git"
+  },
+  "keywords": [
+    "sefaria"
+  ],
+  "author": "M-Zuber",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Orthodox-Union/ShnayimMikrah/issues"
+  },
+  "homepage": "https://github.com/Orthodox-Union/ShnayimMikrah#readme",
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/node": "^14.14.10",
+    "typescript": "^4.1.2"
+  },
+  "dependencies": {
+    "axios": "^0.21.0"
+  }
+}
