@@ -1,12 +1,7 @@
 import Axios from "axios";
 interface Args {
   /**
-   * Used to specify which day you want the calendars for. Each parameter should be an 1-based integar.
-   * If left out, the calendars for today will be returned
-   */
-  date?: { day: number, month: number, year: number }
-  /**
-   * Used to localize the time for the requested calendars. 
+   * Used to determine what date we need to look at in order to return the correct Aliyah.
    * Must be a valid IANA time zone string, such as Asia/Jerusalem, America/New_York, Europe/Paris, etc.
    */
   timezone: string;
@@ -15,6 +10,9 @@ interface Args {
    * Default is diaspora=1 to get the diaspora version.
    */
   diaspora?: number;
+  /**
+   * Used to control what ALiyah is returned. Default is the Aliyah for the day of the week.
+   */
   aliyah?: 1 | 2 | 3 | 4 | 5 | 6 | 7; 
 }
 interface ShnayimMikrahVerse {
@@ -45,9 +43,7 @@ function parseRange(range: string) {
 }
 async function getShnayimMikrah(args: Args) {
   const diaspora = args.diaspora ?? 1;
-  const dateUrl = args.date ? `&day=${args.date.day}&month=${args.date.month}&year=${args.date.year}` : '';
-
-  const { data: calendar } = await Axios.get<CalendarResponse>(`https://www.sefaria.org/api/calendars?timezone=${args.timezone}&diaspora=${diaspora}${dateUrl}`);
+  const { data: calendar } = await Axios.get<CalendarResponse>(`https://www.sefaria.org/api/calendars?timezone=${args.timezone}&diaspora=${diaspora}`);
   const aliyahIndex = args.aliyah ? args.aliyah - 1 : new Date().getDay();
   const range = calendar.calendar_items[0].extraDetails.aliyot[aliyahIndex];
   const chapterAndVerse = parseRange(range);
