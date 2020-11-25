@@ -1,4 +1,5 @@
 import Axios from "axios";
+import { Book, CalendarResponse, TextResponse, TargumResponse, RashiResponse } from "./SefariaResponse";
 interface Args {
   /**
    * Used to determine what date we need to look at in order to return the correct Aliyah.

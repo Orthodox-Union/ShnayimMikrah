@@ -1,11 +1,13 @@
 {
-  "name": "shnayimmikrah",
-  "version": "0.1.0",
+  "name": "@orthodox-union/shnayimmikrah",
+  "version": "0.0.0",
   "description": "Wrapper over Sefaria API in order to get Shnayim Mikrah texts.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",

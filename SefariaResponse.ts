@@ -1,25 +1,25 @@
-interface CalendarResponse {
+export interface CalendarResponse {
   date: string;
   timezone: string;
   calendar_items: calendarItem[];
 }
 
-interface calendarItem {
+export interface calendarItem {
   title: { en: string, he: string};
   extraDetails: { aliyot: string[] };
 }
 
-interface RashiResponse {
+export interface RashiResponse {
   text: string[] | Array<string[]> | Array<Array<string[]>>;
   he: string[] | Array<string[]> | Array<Array<string[]>>;
 }
 
-interface TargumResponse {
+export interface TargumResponse {
   he: string | string[] | Array<string[]>;
 }
-type Book = 'Genesis' | 'Exodus' | 'Leviticus' | 'Numbers' | 'Deuteronomy';
+export type Book = 'Genesis' | 'Exodus' | 'Leviticus' | 'Numbers' | 'Deuteronomy';
 
-interface TextResponse {
+export interface TextResponse {
   book: Book;
   text: string | string[] | Array<string[]>
   he:  string | string[] | Array<string[]>;
