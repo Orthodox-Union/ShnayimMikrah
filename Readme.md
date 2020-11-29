@@ -36,6 +36,7 @@ The data returned will have the following shape:
 ```ts
 interface Aliyah {
     book: 'Genesis' | 'Exodus' | 'Leviticus' | 'Numbers' | 'Deuteronomy';
+    aliyah: 1 | 2 | 3 | 4 | 5 | 6 | 7;
     verseRange: string; // Genesis 30:14-30:27
     verses: Array<{
       book: 'Genesis' | 'Exodus' | 'Leviticus' | 'Numbers' | 'Deuteronomy';

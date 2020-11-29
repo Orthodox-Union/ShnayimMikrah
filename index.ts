@@ -1,5 +1,5 @@
 import Axios from "axios";
-import { Book, CalendarResponse, TextResponse, TargumResponse, RashiResponse } from "./SefariaResponse";
+import { Book, CalendarResponse, TextResponse, TargumResponse, RashiResponse, AliyahNumber } from "./SefariaResponse";
 interface Args {
   /**
    * Used to determine what date we need to look at in order to return the correct Aliyah.
@@ -14,7 +14,7 @@ interface Args {
   /**
    * Used to control what ALiyah is returned. Default is the Aliyah for the day of the week.
    */
-  aliyah?: 1 | 2 | 3 | 4 | 5 | 6 | 7; 
+  aliyah?: AliyahNumber; 
 }
 interface ShnayimMikrahVerse {
   book: Book;
@@ -27,6 +27,7 @@ interface ShnayimMikrahVerse {
 }
 interface Aliyah {
   book: Book;
+  aliyah: AliyahNumber;
   /**
    * Chapter + verse range.
    */
@@ -61,6 +62,7 @@ async function getShnayimMikrah(args: Args) {
   let aliyah: Aliyah = {
     verseRange: range,
     book: chumash.book,
+    aliyah: aliyahIndex as AliyahNumber,
     verses: []
   };
 

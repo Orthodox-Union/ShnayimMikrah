@@ -18,6 +18,7 @@ export interface TargumResponse {
   he: string | string[] | Array<string[]>;
 }
 export type Book = 'Genesis' | 'Exodus' | 'Leviticus' | 'Numbers' | 'Deuteronomy';
+export type AliyahNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export interface TextResponse {
   book: Book;
