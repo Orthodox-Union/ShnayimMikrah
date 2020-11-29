@@ -1,39 +1,6 @@
 import Axios from "axios";
-import { Book, CalendarResponse, TextResponse, TargumResponse, RashiResponse, AliyahNumber } from "./SefariaResponse";
-interface Args {
-  /**
-   * Used to determine what date we need to look at in order to return the correct Aliyah.
-   * Must be a valid IANA time zone string, such as Asia/Jerusalem, America/New_York, Europe/Paris, etc.
-   */
-  timezone: string;
-  /**
-   * Used to specify if you want the parasha according to the diaspora calendar or according to the Israel calendar. 
-   * Default is diaspora=1 to get the diaspora version.
-   */
-  diaspora?: number;
-  /**
-   * Used to control what ALiyah is returned. Default is the Aliyah for the day of the week.
-   */
-  aliyah?: AliyahNumber; 
-}
-interface ShnayimMikrahVerse {
-  book: Book;
-  chapter: number;
-  verse: number;
-  hebrewText: string;
-  englishText: string;
-  targum: string;
-  rashi: string[];
-}
-interface Aliyah {
-  book: Book;
-  aliyah: AliyahNumber;
-  /**
-   * Chapter + verse range.
-   */
-  verseRange: string;
-  verses: ShnayimMikrahVerse[];
-}
+import { CalendarResponse, TextResponse, TargumResponse, RashiResponse, AliyahNumber, Aliyah, Args } from "./types";
+
 function parseRange(range: string) {
   const operative = range.split(' ')[1].split('-');
   const start = operative[0].split(':').map(Number);
