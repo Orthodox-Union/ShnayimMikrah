@@ -1,15 +1,11 @@
 import Axios from "axios";
 import { CalendarResponse, TextResponse, TargumResponse, RashiResponse, AliyahNumber, Aliyah, Args } from "./types";
+import { parseRange } from "./utils";
 
-function parseRange(range: string) {
-  const operative = range.split(' ')[1].split('-');
-  const start = operative[0].split(':').map(Number);
-  const end = operative[1]?.split(':').map(Number);
-  if (end?.length === 1) {
-    end.unshift(start[0]);
-  }
-  return { start, end }
-}
+/**
+ * Get Shnayim Mikrah for an Aliyah with Targum and Rashi.
+ * @param args Options to control what data is returned.
+ */
 async function getShnayimMikrah(args: Args) {
   const diaspora = args.diaspora ?? 1;
   const { data: calendar } = await Axios.get<CalendarResponse>(`https://www.sefaria.org/api/calendars?timezone=${args.timezone}&diaspora=${diaspora}`);
