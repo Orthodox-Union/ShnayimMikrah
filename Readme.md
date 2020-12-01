@@ -1,7 +1,8 @@
 # Shnayim Mikrah
 This project serves as a wrapper over the [Sefaria](https://github.com/Sefaria/Sefaria-Project/wiki/API-Documentation) api to enable presenting Shnayim Mikrah text by Aliyah.
 
-# Request
+# On-line Support
+## Request
 The following arguments can be set to control what data is returned:
 ```ts
 interface Args {
@@ -31,7 +32,7 @@ await getShnayimMikrah({
 });
 ```
 
-# Response
+## Response
 The data returned will have the following shape:
 ```ts
 interface Aliyah {
@@ -47,5 +48,46 @@ interface Aliyah {
       targum: string;
       rashi: string[];
     }>;
+}
+```
+# Off-line Support
+
+## Request
+```typescript
+interface OfflineArgs {
+	/**
+   * Tells the package how to get the data.
+   */
+  getData: (book: BookName) => Promise<OfflineStorage>;
+  /**
+   * The book the Parsha is in.
+   * Used in the getData function
+   */
+  book: BookName;
+	/**
+   * The Parsha to return.
+   */
+	parsha: ParshaName;
+	/**
+   * Used to control what ALiyah is returned. Default is the Aliyah for the day of the week.
+   */
+	aliyah?: AliyahNumber;
+	/**
+   * If true, the entire Parsha of the week will be returned.
+   */
+	wholeParsha?: boolean;
+}
+```
+
+## Response
+If you request a single Aliyah, the response will be the [same as offline support.](#response)
+
+Otherwise you will get the entire Parsha:
+```typescript
+interface Parsha {
+	name: ParshaName;
+	book: BookName;
+	fullRef: string;
+	aliyot: Aliyah[];
 }
 ```
