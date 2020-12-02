@@ -103,10 +103,10 @@ async function downloadBook(book: BookName, save: (data: OfflineStorage) => void
           parshaName: p.name,
           book: p.book,
           verseRange: a,
-          aliyah: i as AliyahNumber,
+          aliyah: i + 1 as AliyahNumber,
           verses: verses.slice(
-            verseIndexMapper[`${chapterAndVerse.start[0]}-${chapterAndVerse.start[1]}`],
-            verseIndexMapper[`${chapterAndVerse.end[0]}-${chapterAndVerse.end[1]}`]
+            verseIndexMapper[`${chapterAndVerse.start[0] - 1}-${chapterAndVerse.start[1] - 1}`],
+            verseIndexMapper[`${chapterAndVerse.end[0] - 1}-${chapterAndVerse.end[1]}`]
           )
         }
       })
