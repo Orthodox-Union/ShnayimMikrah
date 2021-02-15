@@ -106,7 +106,7 @@ async function downloadBook(book: BookName, save: (data: OfflineStorage) => void
           aliyah: i + 1 as AliyahNumber,
           verses: verses.slice(
             verseIndexMapper[`${chapterAndVerse.start[0] - 1}-${chapterAndVerse.start[1] - 1}`],
-            verseIndexMapper[`${chapterAndVerse.end[0] - 1}-${chapterAndVerse.end[1]}`]
+            verseIndexMapper[`${chapterAndVerse.end[0] - 1}-${chapterAndVerse.end[1] - 1}`] + 1
           )
         }
       })
