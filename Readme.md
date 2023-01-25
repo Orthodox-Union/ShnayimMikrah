@@ -20,6 +20,16 @@ interface Args {
    * Used to control what ALiyah is returned. Default is the Aliyah for the day of the week.
    */
   aliyah?: 1 | 2 | 3 | 4 | 5 | 6 | 7; 
+
+	/**
+	 * What version should be used for the Hebrew text
+	 */
+	hebrewTextVersion: HebrewTextVersionOptions;
+	
+	/**
+	 * What version should be used for the English text
+	 */
+	englishTextVersion: EnglishTextVersionOptions;
 }
 ```
 
@@ -51,6 +61,36 @@ interface Aliyah {
 }
 ```
 # Off-line Support
+
+## Download
+To download the data, you have the following options
+```typescript
+interface DownloadArgs {
+	/**
+	 * Should the entire Chumash be download.
+	 * Will take predence over `book`
+	 */
+	all: boolean;
+	/**
+	 * The Book you want to download.
+	 */
+	book: BookName;
+	/**
+	 * How the data should be stored
+	 * @param {data} data The data being saved
+	 */
+	save: (data: OfflineStorage) => void;
+	/**
+	 * What version should be used for the Hebrew text
+	 */
+	hebrewTextVersion: HebrewTextVersionOptions;
+	
+	/**
+	 * What version should be used for the English text
+	 */
+	englishTextVersion: EnglishTextVersionOptions;
+}
+```
 
 ## Request
 ```typescript

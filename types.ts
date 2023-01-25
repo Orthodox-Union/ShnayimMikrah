@@ -26,11 +26,15 @@ export enum BookName {
 }
 export type AliyahNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
-export interface TextResponse {
+
+interface InternalTextResponse<TextShape> {
 	book: BookName;
-	text: string | string[] | Array<string[]>;
-	he: string | string[] | Array<string[]>;
+	text: TextShape;
+	he: TextShape;
 }
+
+export type TextResponse = InternalTextResponse<string | string[] | Array<string[]>>;
+export type ChumashTextResponse = InternalTextResponse<Array<string[]>>;
 
 export interface Args {
 	/**
@@ -47,6 +51,16 @@ export interface Args {
    * Used to control what ALiyah is returned. Default is the Aliyah for the day of the week.
    */
 	aliyah?: AliyahNumber;
+
+	/**
+	 * What version should be used for the Hebrew text
+	 */
+	hebrewTextVersion: HebrewTextVersionOptions;
+	
+	/**
+	 * What version should be used for the English text
+	 */
+	englishTextVersion: EnglishTextVersionOptions;
 }
 
 export enum ParshaName {
@@ -174,4 +188,38 @@ export interface Parsha {
 export interface OfflineStorage {
   book: BookName,
 	parshiot: Record<ParshaName, Parsha>;
+}
+
+export type HebrewTextVersionOptions = 'Miqra_according_to_the_Masorah';
+export type EnglishTextVersionOptions = 'The_Koren_Jerusalem_Bible';
+export type TargumVersionOptions = 'Sifsei Chachomim Chumash, Metsudah Publications, 2009';
+export type RashiVersionOptions = 'Rashi Chumash, Metsudah Publications, 2009';
+
+/**
+ * Options to be used when downloading offline data
+ */
+export interface DownloadArgs {
+	/**
+	 * Should the entire Chumash be download.
+	 * Will take predence over `book`
+	 */
+	all: boolean;
+	/**
+	 * The Book you want to download.
+	 */
+	book: BookName;
+	/**
+	 * How the data should be stored
+	 * @param {data} data The data being saved
+	 */
+	save: (data: OfflineStorage) => void;
+	/**
+	 * What version should be used for the Hebrew text
+	 */
+	hebrewTextVersion: HebrewTextVersionOptions;
+	
+	/**
+	 * What version should be used for the English text
+	 */
+	englishTextVersion: EnglishTextVersionOptions;
 }

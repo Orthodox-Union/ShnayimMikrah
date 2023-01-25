@@ -4,7 +4,7 @@ import { parseRange } from "./utils";
 
 /**
  * Get Shnayim Mikrah for an Aliyah with Targum and Rashi.
- * @param args Options to control what data is returned.
+ * @param {Args} args Options to control what data is returned.
  */
 async function getShnayimMikrah(args: Args) {
   const diaspora = args.diaspora ?? 1;
@@ -18,7 +18,7 @@ async function getShnayimMikrah(args: Args) {
     1: { data: targum },
     2: { data: rashi }
   } = await Promise.all([
-    Axios.get<TextResponse>(`https://www.sefaria.org/api/texts/${range}?context=0`),
+    Axios.get<TextResponse>(`https://www.sefaria.org/api/texts/${range}?context=0&ven=${args.englishTextVersion}&vhe=${args.hebrewTextVersion}`),
     Axios.get<TargumResponse>(`https://www.sefaria.org/api/texts/Onkelos_${range}?context=0`),
     Axios.get<RashiResponse>(`https://www.sefaria.org/api/texts/Rashi_on_${range}?context=0`)
   ]);

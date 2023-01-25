@@ -1,37 +1,24 @@
 import Axios from "axios";
 import { parshiotArray } from "./parshiot";
-import { AliyahNumber, BookName, OfflineArgs, OfflineStorage, Parsha, ParshaName, RawFileDownloadResponse, ShnayimMikrahVerse } from "./types";
+import {
+  AliyahNumber, BookName, ChumashTextResponse, DownloadArgs, EnglishTextVersionOptions,
+  HebrewTextVersionOptions, OfflineArgs, Parsha,
+  ParshaName, RashiVersionOptions, RawFileDownloadResponse, ShnayimMikrahVerse, TargumVersionOptions
+} from "./types";
 import { parseRange } from "./utils";
 
-const baseChumashLink = 'https://raw.githubusercontent.com/Sefaria/Sefaria-Export/master/json/Tanakh/Torah/$book/$language/merged.json';
-const getChumashLink = (book: BookName, language: 'Hebrew' | 'English') =>
+const baseChumashLink =
+'https://www.sefaria.org/api/texts/$book?vhe=$hebrewVersion&ven=$englishVersion&context=0&pad=0'
+  'https://raw.githubusercontent.com/Sefaria/Sefaria-Export/master/json/Tanakh/Torah/$book/$language/merged.json';
+const getChumashLink = (book: BookName, hebrewVersion: HebrewTextVersionOptions, englishVersion: EnglishTextVersionOptions) =>
   baseChumashLink
     .replace('$book', book)
-    .replace('$language', language);
-const bookLinks = {
-  [BookName.Genesis]: {
-    en: getChumashLink(BookName.Genesis, 'English'),
-    he:  getChumashLink(BookName.Genesis, 'Hebrew')
-  },
-  [BookName.Exodus]: {
-    en: getChumashLink(BookName.Exodus, 'English'),
-    he:  getChumashLink(BookName.Exodus, 'Hebrew')
-  },
-  [BookName.Leviticus]: {
-    en: getChumashLink(BookName.Leviticus, 'English'),
-    he:  getChumashLink(BookName.Leviticus, 'Hebrew')
-  },
-  [BookName.Numbers]: {
-    en: getChumashLink(BookName.Numbers, 'English'),
-    he:  getChumashLink(BookName.Numbers, 'Hebrew')
-  },
-  [BookName.Deuteronomy]: {
-    en: getChumashLink(BookName.Deuteronomy, 'English'),
-    he:  getChumashLink(BookName.Deuteronomy, 'Hebrew')
-  },
-};
+    .replace('$hebrewVersion', hebrewVersion)
+    .replace('$englishVersion', englishVersion);
 
-const baseTargumLink = 'https://raw.githubusercontent.com/Sefaria/Sefaria-Export/master/json/Tanakh/Targum/Onkelos/Torah/Onkelos%20$book/Hebrew/merged.json';
+// For right now Targum and Rashi versions are hardcoded
+const targumVersion: TargumVersionOptions = 'Sifsei Chachomim Chumash, Metsudah Publications, 2009';
+const baseTargumLink = `https://raw.githubusercontent.com/Sefaria/Sefaria-Export/master/json/Tanakh/Targum/Onkelos/Torah/Onkelos%20$book/Hebrew/${targumVersion}.json`;
 const getTargumLink = (book: BookName) =>
   baseTargumLink
     .replace('$book', book);
@@ -43,7 +30,8 @@ const targumLinks = {
   [BookName.Deuteronomy]: getTargumLink(BookName.Deuteronomy),
 };
 
-const baseRashiLink = 'https://raw.githubusercontent.com/Sefaria/Sefaria-Export/master/json/Tanakh/Commentary/Rashi/Torah/Rashi%20on%20$book/Hebrew/merged.json';
+const rashiVersion: RashiVersionOptions = 'Rashi Chumash, Metsudah Publications, 2009';
+const baseRashiLink = `https://raw.githubusercontent.com/Sefaria/Sefaria-Export/master/json/Tanakh/Commentary/Rashi/Torah/Rashi%20on%20$book/Hebrew/${rashiVersion}.json`;
 const getRashiLink = (book: BookName) =>
   baseRashiLink
     .replace('$book', book);
@@ -57,17 +45,11 @@ const rashiLinks = {
 
 /**
  * Will download a book with commentaries.
- * @param book The Book you want to download.
- * @param save A function to save the downloaded content.
+ * @param {DownloadArgs} args Options to be used while downloading the Book
  */
-async function downloadBook(book: BookName, save: (data: OfflineStorage) => void) {
-  const {
-    0: { data: { text: hebrewBookText } },
-    1: { data: { text: englishBookText } }
-  } = await Promise.all([
-    Axios.get<RawFileDownloadResponse<string[][]>>(bookLinks[book].he),
-    Axios.get<RawFileDownloadResponse<string[][]>>(bookLinks[book].en)
-  ]);
+async function downloadBook(args: DownloadArgs) {
+  const { book, hebrewTextVersion, englishTextVersion, save } = args;
+  const { data: { text: englishBookText, he: hebrewBookText } } = await Axios.get<ChumashTextResponse>(getChumashLink(book, hebrewTextVersion, englishTextVersion));
   const { data: { text: targumText } } = await Axios.get<RawFileDownloadResponse<string[][]>>(targumLinks[book]);
   const { data: { text: rashiText } } = await Axios.get<RawFileDownloadResponse<string[][][]>>(rashiLinks[book]);
 
@@ -120,22 +102,38 @@ async function downloadBook(book: BookName, save: (data: OfflineStorage) => void
 
 /**
  * Will download the entire Chumash with commentaries.
- * @param book The Book you want to download.
- * @param save A function to save the downloaded content.
+ * @param {DownloadArgs} args Options to be used while downloading the Book
  */
-async function downloadChumash(save: (data: OfflineStorage) => void) {
+async function downloadChumash(args: DownloadArgs) {
   return Promise.all([
-    downloadBook(BookName.Genesis, save),
-    downloadBook(BookName.Exodus, save),
-    downloadBook(BookName.Leviticus, save),
-    downloadBook(BookName.Numbers, save),
-    downloadBook(BookName.Deuteronomy, save),
+    downloadBook({ ...args, book: BookName.Genesis }),
+    downloadBook({ ...args, book: BookName.Exodus }),
+    downloadBook({ ...args, book: BookName.Leviticus }),
+    downloadBook({ ...args, book: BookName.Numbers }),
+    downloadBook({ ...args, book: BookName.Deuteronomy }),
   ])
 }
 
 /**
+ * Will download the requested Book, or the whole Chumash per the option selected
+ * @param {DownloadArgs} args Options to be used when saving the data for offline use.
+ */
+async function download(args: DownloadArgs) {
+  if (args.all) {
+    return downloadChumash(args);
+  }
+  else { 
+    return downloadBook(args);
+  }
+}
+
+/**
+ * Indicates if a new version of the libary was released and therfore data should be redownloaded since it might be stale
+ */
+const version: number = 1;
+/**
  * Get Shnayim Mikrah for an Aliyah with Targum and Rashi using offline data.
- * @param args Options to control what data is returned.
+ * @param {OfflineArgs} args Options to control what data is returned.
  */
 async function getShnayimMikrahOffline(args: OfflineArgs) {
   const book = await args.getData(args.book);
@@ -150,7 +148,7 @@ async function getShnayimMikrahOffline(args: OfflineArgs) {
 }
 
 export {
-  downloadBook,
-  downloadChumash,
+  version,
+  download,
   getShnayimMikrahOffline
 };
