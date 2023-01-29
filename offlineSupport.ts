@@ -19,9 +19,7 @@ const getChumashLink = (book: BookName, hebrewVersion: HebrewTextVersionOptions,
 // For right now Targum and Rashi versions are hardcoded
 const targumVersion: TargumVersionOptions = 'Sifsei Chachomim Chumash, Metsudah Publications, 2009';
 const baseTargumLink = `https://raw.githubusercontent.com/Sefaria/Sefaria-Export/master/json/Tanakh/Targum/Onkelos/Torah/Onkelos%20$book/Hebrew/${targumVersion}.json`;
-const getTargumLink = (book: BookName) =>
-  baseTargumLink
-    .replace('$book', book);
+const getTargumLink = (book: BookName) => encodeURI(baseTargumLink.replace('$book', book));
 const targumLinks = {
   [BookName.Genesis]: getTargumLink(BookName.Genesis),
   [BookName.Exodus]: getTargumLink(BookName.Exodus),
@@ -32,9 +30,7 @@ const targumLinks = {
 
 const rashiVersion: RashiVersionOptions = 'Rashi Chumash, Metsudah Publications, 2009';
 const baseRashiLink = `https://raw.githubusercontent.com/Sefaria/Sefaria-Export/master/json/Tanakh/Commentary/Rashi/Torah/Rashi%20on%20$book/Hebrew/${rashiVersion}.json`;
-const getRashiLink = (book: BookName) =>
-  baseRashiLink
-    .replace('$book', book);
+const getRashiLink = (book: BookName) => encodeURI(baseRashiLink.replace('$book', book));
 const rashiLinks = {
   [BookName.Genesis]: getRashiLink(BookName.Genesis),
   [BookName.Exodus]: getRashiLink(BookName.Exodus),
