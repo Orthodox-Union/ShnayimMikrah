@@ -16,7 +16,7 @@ const getChumashLink = (book: BookName, hebrewVersion: HebrewTextVersionOptions,
 
 // For right now Targum and Rashi versions are hardcoded
 const targumVersion: TargumVersionOptions = 'Sifsei Chachomim Chumash, Metsudah Publications, 2009';
-const baseTargumLink = `https://raw.githubusercontent.com/Sefaria/Sefaria-Export/master/json/Tanakh/Targum/Onkelos/Torah/Onkelos $book/Hebrew/${targumVersion}.json`;
+const baseTargumLink = `https://raw.githubusercontent.com/Orthodox-Union/ShnayimMikrah-Files/master/Targum/$book/Hebrew/${targumVersion}.json`;
 const getTargumLink = (book: BookName) => encodeURI(baseTargumLink.replace('$book', book));
 const targumLinks = {
   [BookName.Genesis]: getTargumLink(BookName.Genesis),
@@ -27,7 +27,7 @@ const targumLinks = {
 };
 
 const rashiVersion: RashiVersionOptions = 'Rashi Chumash, Metsudah Publications, 2009';
-const baseRashiLink = `https://raw.githubusercontent.com/Sefaria/Sefaria-Export/master/json/Tanakh/Commentary/Rashi/Torah/Rashi on $book/Hebrew/${rashiVersion}.json`;
+const baseRashiLink = `https://raw.githubusercontent.com/Orthodox-Union/ShnayimMikrah-Files/master/Rashi/$book/Hebrew/${rashiVersion}.json`;
 const getRashiLink = (book: BookName) => encodeURI(baseRashiLink.replace('$book', book));
 const rashiLinks = {
   [BookName.Genesis]: getRashiLink(BookName.Genesis),
