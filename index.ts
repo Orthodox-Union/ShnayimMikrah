@@ -16,11 +16,13 @@ async function getShnayimMikrah(args: Args) {
   const {
     0: { data: chumash },
     1: { data: targum },
-    2: { data: rashi }
+    2: { data: rashi },
+    3: { data: rashiEnglish },
   } = await Promise.all([
     Axios.get<TextResponse>(`https://www.sefaria.org/api/texts/${range}?context=0&ven=${args.englishTextVersion}&vhe=${args.hebrewTextVersion}`),
     Axios.get<TargumResponse>(`https://www.sefaria.org/api/texts/Onkelos_${range}?context=0`),
-    Axios.get<RashiResponse>(`https://www.sefaria.org/api/texts/Rashi_on_${range}?context=0`)
+    Axios.get<RashiResponse>(`https://www.sefaria.org/api/texts/Rashi_on_${range}?context=0`),
+    Axios.get<RashiResponse>(`https://www.sefaria.org/api/texts/Rashi_on_${range}?context=0&lang=en`)
   ]);
   let aliyah: Aliyah = {
     verseRange: range,
@@ -38,7 +40,8 @@ async function getShnayimMikrah(args: Args) {
       englishText: chumash.text,
       hebrewText: chumash.he as string,
       rashi: rashi.he as string[],
-      targum: targum.he as string
+      targum: targum.he as string,
+      rashiEnglish: rashiEnglish.text as string[]
     })
   }
   // All Pasukim are in the same perek.
@@ -50,7 +53,8 @@ async function getShnayimMikrah(args: Args) {
       englishText: t,
       hebrewText: chumash.he[i] as string,
       rashi: rashi.he[i] as string[],
-      targum: targum.he[i] as string
+      targum: targum.he[i] as string,
+      rashiEnglish: rashiEnglish.text[i] as string[]
     }));
   }
   // Multiple Perakim
@@ -68,7 +72,8 @@ async function getShnayimMikrah(args: Args) {
           englishText: t,
           hebrewText: (chumash.he as string[][])[oi][i],
           rashi: (rashi.he as string[][][])[oi][i],
-          targum: (targum.he as string[][])[oi][i]
+          targum: (targum.he as string[][])[oi][i],
+          rashiEnglish: (rashiEnglish.text as string[][][])[oi][i]
         })
       });
     });

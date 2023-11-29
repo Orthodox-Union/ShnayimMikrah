@@ -37,6 +37,17 @@ const rashiLinks = {
   [BookName.Deuteronomy]: getRashiLink(BookName.Deuteronomy),
 };
 
+const rashiEnglishVersion: RashiVersionOptions = 'Rashi Chumash, Metsudah Publications, 2009';
+const baseRashiEnglishLink = `https://raw.githubusercontent.com/Orthodox-Union/ShnayimMikrah-Files/master/Rashi/$book/English/${rashiEnglishVersion}.json`;
+const getRashiEnglishLink = (book: BookName) => encodeURI(baseRashiEnglishLink.replace('$book', book));
+const rashiEnglishLinks = {
+  [BookName.Genesis]: getRashiEnglishLink(BookName.Genesis),
+  [BookName.Exodus]: getRashiEnglishLink(BookName.Exodus),
+  [BookName.Leviticus]: getRashiEnglishLink(BookName.Leviticus),
+  [BookName.Numbers]: getRashiEnglishLink(BookName.Numbers),
+  [BookName.Deuteronomy]: getRashiEnglishLink(BookName.Deuteronomy),
+};
+
 /**
  * Will download a book with commentaries.
  * @param {DownloadArgs} args Options to be used while downloading the Book
@@ -46,6 +57,7 @@ async function downloadBook(args: DownloadArgs) {
   const { data: { text: englishBookText, he: hebrewBookText } } = await Axios.get<ChumashTextResponse>(getChumashLink(book, hebrewTextVersion, englishTextVersion));
   const { data: { text: targumText } } = await Axios.get<RawFileDownloadResponse<string[][]>>(targumLinks[book]);
   const { data: { text: rashiText } } = await Axios.get<RawFileDownloadResponse<string[][][]>>(rashiLinks[book]);
+  const { data: { text: rashiEnglishText } } = await Axios.get<RawFileDownloadResponse<string[][][]>>(rashiEnglishLinks[book]);
 
   const verseIndexMapper: Record<string, number> = {};
   let k = 0;
@@ -61,8 +73,9 @@ async function downloadBook(args: DownloadArgs) {
         hebrewText: id,
         englishText: englishBookText[i][ii],
         targum: targumText[i][ii],
-        rashi: rashiText[i][ii]
-      }
+        rashi: rashiText[i][ii],
+        rashiEnglish: rashiEnglishText[i][ii]
+      };
     })
   );
   const parshiot = parshiotArray

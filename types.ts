@@ -162,6 +162,7 @@ export interface ShnayimMikrahVerse {
 	englishText: string;
 	targum: string;
 	rashi: string[];
+	rashiEnglish: string[];
 }
 export interface Aliyah {
 	book: BookName;
@@ -194,6 +195,7 @@ export type HebrewTextVersionOptions = 'Miqra_according_to_the_Masorah';
 export type EnglishTextVersionOptions = 'The_Koren_Jerusalem_Bible';
 export type TargumVersionOptions = 'Sifsei Chachomim Chumash, Metsudah Publications, 2009';
 export type RashiVersionOptions = 'Rashi Chumash, Metsudah Publications, 2009';
+export type RashiEnglishVersionOptions = 'Rashi Chumash, Metsudah Publications, 2009';
 
 /**
  * Options to be used when downloading offline data
