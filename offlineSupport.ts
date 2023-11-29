@@ -137,7 +137,7 @@ async function download(args: DownloadArgs) {
 /**
  * Indicates if a new version of the libary was released and therfore data should be redownloaded since it might be stale
  */
-const version: number = 1;
+const version: number = 2;
 /**
  * Get Shnayim Mikrah for an Aliyah with Targum and Rashi using offline data.
  * @param {OfflineArgs} args Options to control what data is returned.
