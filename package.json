@@ -1,6 +1,6 @@
 {
   "name": "@orthodox-union/shnayimmikrah",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "description": "Wrapper over Sefaria API in order to get Shnayim Mikrah texts.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
