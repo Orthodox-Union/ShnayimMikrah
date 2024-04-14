@@ -389,8 +389,8 @@ export const parshiot: { [key in ParshaName]: { fullRef: string, name: ParshaNam
       "Leviticus 13:18-13:23",
       "Leviticus 13:24-13:28",
       "Leviticus 13:29-13:39",
-      "Leviticus 13:40-13:59",
-      "Numbers 28:9-28:15"
+      "Leviticus 13:40-13:54",
+      "Leviticus 13:55-13:59"
     ]
   },
   "Metzora": {
