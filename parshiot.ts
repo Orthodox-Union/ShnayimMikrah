@@ -1,4 +1,4 @@
-import { BookName, Parsha, ParshaName } from "./types";
+import { BookName, ParshaName } from "./types";
 
 export const parshiot: { [key in ParshaName]: { fullRef: string, name: ParshaName, book: BookName, aliyot: string[]}} = {
   "Bereshit": {
