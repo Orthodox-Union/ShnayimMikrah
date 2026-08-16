@@ -61,6 +61,22 @@ export interface Args {
 	 * What version should be used for the English text
 	 */
 	englishTextVersion: EnglishTextVersionOptions;
+
+	/**
+	 * What version should be used for the Hebrew Rashi commentary.
+	 * Defaults to the Metsudah edition so the online result matches the
+	 * offline data source. If omitted, Sefaria's default (Silbermann) was
+	 * previously returned instead.
+	 */
+	rashiHebrewVersion?: RashiVersionOptions;
+
+	/**
+	 * What version should be used for the English Rashi commentary.
+	 * Defaults to the Metsudah edition so the online result matches the
+	 * offline data source. If omitted, Sefaria's default (Silbermann) was
+	 * previously returned instead.
+	 */
+	rashiEnglishVersion?: RashiEnglishVersionOptions;
 }
 
 export enum ParshaName {
