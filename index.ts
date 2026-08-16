@@ -8,6 +8,11 @@ import { parseRange } from "./utils";
  */
 async function getShnayimMikrah(args: Args) {
   const diaspora = args.diaspora ?? 1;
+  // Pin the Rashi editions so the online result matches the offline data
+  // source (offlineSupport.ts). Without these, Sefaria returns its default
+  // edition (Silbermann) instead of Metsudah.
+  const rashiHebrewVersion = args.rashiHebrewVersion ?? 'Rashi Chumash, Metsudah Publications, 2009';
+  const rashiEnglishVersion = args.rashiEnglishVersion ?? 'Rashi Chumash, Metsudah Publications, 2009';
   const { data: calendar } = await Axios.get<CalendarResponse>(`https://www.sefaria.org/api/calendars?timezone=${args.timezone}&diaspora=${diaspora}`);
   const aliyahIndex = args.aliyah ? args.aliyah - 1 : new Date().getDay();
   const range = calendar.calendar_items[0].extraDetails.aliyot[aliyahIndex];
@@ -21,8 +26,8 @@ async function getShnayimMikrah(args: Args) {
   } = await Promise.all([
     Axios.get<TextResponse>(`https://www.sefaria.org/api/texts/${range}?context=0&ven=${args.englishTextVersion}&vhe=${args.hebrewTextVersion}`),
     Axios.get<TargumResponse>(`https://www.sefaria.org/api/texts/Onkelos_${range}?context=0`),
-    Axios.get<RashiResponse>(`https://www.sefaria.org/api/texts/Rashi_on_${range}?context=0`),
-    Axios.get<RashiResponse>(`https://www.sefaria.org/api/texts/Rashi_on_${range}?context=0&lang=en`)
+    Axios.get<RashiResponse>(`https://www.sefaria.org/api/texts/Rashi_on_${range}?context=0&vhe=${rashiHebrewVersion}`),
+    Axios.get<RashiResponse>(`https://www.sefaria.org/api/texts/Rashi_on_${range}?context=0&lang=en&ven=${rashiEnglishVersion}`)
   ]);
   let aliyah: Aliyah = {
     verseRange: range,
