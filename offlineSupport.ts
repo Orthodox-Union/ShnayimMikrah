@@ -1,9 +1,11 @@
 import Axios from "axios";
+import * as fs from "fs";
+import * as path from "path";
 import { parshiotArray } from "./parshiot";
 import {
   AliyahNumber, BookName, ChumashTextResponse, DownloadArgs, EnglishTextVersionOptions,
   HebrewTextVersionOptions, OfflineArgs, Parsha,
-  ParshaName, RashiVersionOptions, RawFileDownloadResponse, ShnayimMikrahVerse, TargumVersionOptions
+  ParshaName, RawFileDownloadResponse, ShnayimMikrahVerse
 } from "./types";
 import { parseRange } from "./utils";
 
@@ -14,39 +16,16 @@ const getChumashLink = (book: BookName, hebrewVersion: HebrewTextVersionOptions,
     .replace('$hebrewVersion', hebrewVersion)
     .replace('$englishVersion', englishVersion);
 
-// For right now Targum and Rashi versions are hardcoded
-const targumVersion: TargumVersionOptions = 'Sifsei Chachomim Chumash, Metsudah Publications, 2009';
-const baseTargumLink = `https://raw.githubusercontent.com/Orthodox-Union/ShnayimMikrah-Files/master/Targum/$book/Hebrew/${targumVersion}.json`;
-const getTargumLink = (book: BookName) => encodeURI(baseTargumLink.replace('$book', book));
-const targumLinks = {
-  [BookName.Genesis]: getTargumLink(BookName.Genesis),
-  [BookName.Exodus]: getTargumLink(BookName.Exodus),
-  [BookName.Leviticus]: getTargumLink(BookName.Leviticus),
-  [BookName.Numbers]: getTargumLink(BookName.Numbers),
-  [BookName.Deuteronomy]: getTargumLink(BookName.Deuteronomy),
-};
-
-const rashiVersion: RashiVersionOptions = 'Rashi Chumash, Metsudah Publications, 2009';
-const baseRashiLink = `https://raw.githubusercontent.com/Orthodox-Union/ShnayimMikrah-Files/master/Rashi/$book/Hebrew/${rashiVersion}.json`;
-const getRashiLink = (book: BookName) => encodeURI(baseRashiLink.replace('$book', book));
-const rashiLinks = {
-  [BookName.Genesis]: getRashiLink(BookName.Genesis),
-  [BookName.Exodus]: getRashiLink(BookName.Exodus),
-  [BookName.Leviticus]: getRashiLink(BookName.Leviticus),
-  [BookName.Numbers]: getRashiLink(BookName.Numbers),
-  [BookName.Deuteronomy]: getRashiLink(BookName.Deuteronomy),
-};
-
-const rashiEnglishVersion: RashiVersionOptions = 'Rashi Chumash, Metsudah Publications, 2009';
-const baseRashiEnglishLink = `https://raw.githubusercontent.com/Orthodox-Union/ShnayimMikrah-Files/master/Rashi/$book/English/${rashiEnglishVersion}.json`;
-const getRashiEnglishLink = (book: BookName) => encodeURI(baseRashiEnglishLink.replace('$book', book));
-const rashiEnglishLinks = {
-  [BookName.Genesis]: getRashiEnglishLink(BookName.Genesis),
-  [BookName.Exodus]: getRashiEnglishLink(BookName.Exodus),
-  [BookName.Leviticus]: getRashiEnglishLink(BookName.Leviticus),
-  [BookName.Numbers]: getRashiEnglishLink(BookName.Numbers),
-  [BookName.Deuteronomy]: getRashiEnglishLink(BookName.Deuteronomy),
-};
+/**
+ * Targum, Rashi (Hebrew) and Rashi (English) data is static and bundled with the
+ * package under ./data so it can be read from disk instead of being fetched over
+ * the network on every call (see ./data and the `files` entry in package.json).
+ */
+function readBundledData<TextType>(folder: 'targum' | 'rashi-hebrew' | 'rashi-english', book: BookName): RawFileDownloadResponse<TextType> {
+  const filePath = path.join(__dirname, '..', 'data', folder, `${book}.json`);
+  const fileContents = fs.readFileSync(filePath, 'utf-8');
+  return JSON.parse(fileContents);
+}
 
 /**
  * Will download a book with commentaries.
@@ -55,9 +34,9 @@ const rashiEnglishLinks = {
 async function downloadBook(args: DownloadArgs) {
   const { book, hebrewTextVersion, englishTextVersion, save } = args;
   const { data: { text: englishBookText, he: hebrewBookText } } = await Axios.get<ChumashTextResponse>(getChumashLink(book, hebrewTextVersion, englishTextVersion));
-  const { data: { text: targumText } } = await Axios.get<RawFileDownloadResponse<string[][]>>(targumLinks[book]);
-  const { data: { text: rashiText } } = await Axios.get<RawFileDownloadResponse<string[][][]>>(rashiLinks[book]);
-  const { data: { text: rashiEnglishText } } = await Axios.get<RawFileDownloadResponse<string[][][]>>(rashiEnglishLinks[book]);
+  const { text: targumText } = readBundledData<string[][]>('targum', book);
+  const { text: rashiText } = readBundledData<string[][][]>('rashi-hebrew', book);
+  const { text: rashiEnglishText } = readBundledData<string[][][]>('rashi-english', book);
 
   const verseIndexMapper: Record<string, number> = {};
   let k = 0;
