@@ -62,6 +62,9 @@ interface Aliyah {
 ```
 # Off-line Support
 
+Targum and Rashi (Hebrew and English) data is bundled with the package under [data/](/data) and is read directly
+from disk, so downloading only makes a network request for the Chumash text itself (from Sefaria).
+
 ## Download
 To download the data, you have the following options
 ```typescript
