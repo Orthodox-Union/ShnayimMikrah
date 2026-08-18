@@ -1,6 +1,4 @@
 import Axios from "axios";
-import * as fs from "fs";
-import * as path from "path";
 import { parshiotArray } from "./parshiot";
 import {
   AliyahNumber, BookName, ChumashTextResponse, DownloadArgs, EnglishTextVersionOptions,
@@ -8,6 +6,24 @@ import {
   ParshaName, RawFileDownloadResponse, ShnayimMikrahVerse
 } from "./types";
 import { parseRange } from "./utils";
+
+import targumGenesis from "./data/targum/Genesis.json";
+import targumExodus from "./data/targum/Exodus.json";
+import targumLeviticus from "./data/targum/Leviticus.json";
+import targumNumbers from "./data/targum/Numbers.json";
+import targumDeuteronomy from "./data/targum/Deuteronomy.json";
+
+import rashiHebrewGenesis from "./data/rashi-hebrew/Genesis.json";
+import rashiHebrewExodus from "./data/rashi-hebrew/Exodus.json";
+import rashiHebrewLeviticus from "./data/rashi-hebrew/Leviticus.json";
+import rashiHebrewNumbers from "./data/rashi-hebrew/Numbers.json";
+import rashiHebrewDeuteronomy from "./data/rashi-hebrew/Deuteronomy.json";
+
+import rashiEnglishGenesis from "./data/rashi-english/Genesis.json";
+import rashiEnglishExodus from "./data/rashi-english/Exodus.json";
+import rashiEnglishLeviticus from "./data/rashi-english/Leviticus.json";
+import rashiEnglishNumbers from "./data/rashi-english/Numbers.json";
+import rashiEnglishDeuteronomy from "./data/rashi-english/Deuteronomy.json";
 
 const baseChumashLink = 'https://www.sefaria.org/api/texts/$book?vhe=$hebrewVersion&ven=$englishVersion&context=0&pad=0';
 const getChumashLink = (book: BookName, hebrewVersion: HebrewTextVersionOptions, englishVersion: EnglishTextVersionOptions) =>
@@ -18,13 +34,36 @@ const getChumashLink = (book: BookName, hebrewVersion: HebrewTextVersionOptions,
 
 /**
  * Targum, Rashi (Hebrew) and Rashi (English) data is static and bundled with the
- * package under ./data so it can be read from disk instead of being fetched over
- * the network on every call (see ./data and the `files` entry in package.json).
+ * package under ./data. It is imported statically (rather than read from disk with
+ * `fs`) so it works both in Node and when the package is bundled for the browser
+ * (e.g. by Vite/webpack), since `fs`/`path`/`__dirname` are not available client-side.
  */
+const bundledData: Record<'targum' | 'rashi-hebrew' | 'rashi-english', Record<BookName, unknown>> = {
+  targum: {
+    [BookName.Genesis]: targumGenesis,
+    [BookName.Exodus]: targumExodus,
+    [BookName.Leviticus]: targumLeviticus,
+    [BookName.Numbers]: targumNumbers,
+    [BookName.Deuteronomy]: targumDeuteronomy,
+  },
+  'rashi-hebrew': {
+    [BookName.Genesis]: rashiHebrewGenesis,
+    [BookName.Exodus]: rashiHebrewExodus,
+    [BookName.Leviticus]: rashiHebrewLeviticus,
+    [BookName.Numbers]: rashiHebrewNumbers,
+    [BookName.Deuteronomy]: rashiHebrewDeuteronomy,
+  },
+  'rashi-english': {
+    [BookName.Genesis]: rashiEnglishGenesis,
+    [BookName.Exodus]: rashiEnglishExodus,
+    [BookName.Leviticus]: rashiEnglishLeviticus,
+    [BookName.Numbers]: rashiEnglishNumbers,
+    [BookName.Deuteronomy]: rashiEnglishDeuteronomy,
+  },
+};
+
 function readBundledData<TextType>(folder: 'targum' | 'rashi-hebrew' | 'rashi-english', book: BookName): RawFileDownloadResponse<TextType> {
-  const filePath = path.join(__dirname, '..', 'data', folder, `${book}.json`);
-  const fileContents = fs.readFileSync(filePath, 'utf-8');
-  return JSON.parse(fileContents);
+  return bundledData[folder][book] as RawFileDownloadResponse<TextType>;
 }
 
 /**
@@ -116,7 +155,7 @@ async function download(args: DownloadArgs) {
 /**
  * Indicates if a new version of the libary was released and therefore data should be redownloaded since it might be stale
  */
-const version: number = 6;
+const version: number = 7;
 /**
  * Get Shnayim Mikrah for an Aliyah with Targum and Rashi using offline data.
  * @param {OfflineArgs} args Options to control what data is returned.
