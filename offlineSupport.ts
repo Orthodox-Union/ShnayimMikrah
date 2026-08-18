@@ -63,7 +63,11 @@ const bundledData: Record<'targum' | 'rashi-hebrew' | 'rashi-english', Record<Bo
 };
 
 function readBundledData<TextType>(folder: 'targum' | 'rashi-hebrew' | 'rashi-english', book: BookName): RawFileDownloadResponse<TextType> {
-  return bundledData[folder][book] as RawFileDownloadResponse<TextType>;
+  const data = bundledData[folder][book] as RawFileDownloadResponse<TextType> | undefined;
+  if (!data || typeof data !== 'object' || !('text' in data)) {
+    throw new Error(`Bundled data for "${folder}/${book}" is missing or malformed. Expected an object with a "text" property.`);
+  }
+  return data;
 }
 
 /**
